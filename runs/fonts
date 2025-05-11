@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Installing fonts..."
+
+sudo pacman -S \
+  ttf-font-awesome \
+  ttf-nerd-fonts-symbols \
+  powerline-fonts \
+  ttf-nerd-fonts-symbols-mono \
+  ttf-jetbrains-mono \
+  ttf-jetbrains-mono-nerd \
+  ttf-firacode-nerd \
+  ttf-iosevka-nerd \
+  ttf-sourcecodepro-nerd \
+  noto-fonts \
+  ttf-opensans \
+  ttf-ibm-plex \
+  adobe-source-sans-fonts \
+  adobe-source-serif-fonts \
+  texlive-fontsextra \
+  gnu-free-fonts \
+  ttf-roboto \
+  adwaita-fonts \
+  ttf-liberation \
+  --needed --noconfirm
+
+yay -S ttf-icomoon-feather-git ttf-all-the-icons --needed --noconfirm
+
+echo "Fonts installed successfully."
+
+echo "Refreshing font cache..."
+fc-cache -fv
+echo "Font cache refreshed."

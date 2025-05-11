@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -e
+
+log() {
+  echo "[shell] $1"
+}
+
+log "Installing core shell packages..."
+sudo pacman -S \
+  ripgrep \
+  fd \
+  zsh \
+  git \
+  fzf \
+  lsd \
+  tldr \
+  curl \
+  unzip \
+  zoxide \
+  dos2unix \
+  --needed --noconfirm
+
+if [[ "$SHELL" != "$(which zsh)" ]]; then
+  log "Changing default shell to Zsh..."
+  chsh -s "$(which zsh)"
+else
+  log "Zsh is already the default shell"
+fi
+
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  log "Installing Oh My Zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+else
+  log "Oh My Zsh already installed"
+fi
+
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
+  log "Installing zsh-autosuggestions..."
+  git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+fi
+
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
+  log "Installing zsh-syntax-highlighting..."
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi
+
+if [[ ! -d "$ZSH_CUSTOM/plugins/fzf-tab" ]]; then
+  log "Installing fzf-tab..."
+  git clone https://github.com/Aloxaf/fzf-tab "$ZSH_CUSTOM/plugins/fzf-tab"
+fi
+
+log "Shell setup complete!"

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Installing Rofi..."
+sudo pacman -S rofi-wayland --noconfirm --needed
+echo "Rofi installed successfully."

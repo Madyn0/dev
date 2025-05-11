@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Installing Hyprpaper..."
+sudo pacman -S hyprpaper --noconfirm --needed
+echo "Hyprpaper installed successfully."
+
+echo "Removing existing wallpapers directory..."
+rm -rf $HOME/Wallpapers
+
+echo "Cloning wallpapers repository..."
+git clone git@github.com:Madyn0/Wallpapers.git $HOME/Wallpapers
+echo "Wallpapers cloned successfully."

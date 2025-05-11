@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+
+if command -v yay >/dev/null 2>&1; then
+  echo "[yay] Already installed, skipping."
+  exit 0
+fi
+
+echo "[yay] Installing yay from AUR..."
+
+cd "$HOME"
+git clone https://aur.archlinux.org/yay-bin.git
+cd yay-bin
+makepkg -rsi --noconfirm
+cd "$HOME"
+rm -rf yay-bin
+
+echo "[yay] yay installation complete."

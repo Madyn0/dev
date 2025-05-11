@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+dry_run="0"
+
+# Default to XDG config if not set
+if [ -z "${XDG_CONFIG_HOME:-}" ]; then
+    echo "no xdg config home; using ~/.config"
+    XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+# Make sure DEV_ENV is set
+if [ -z "${DEV_ENV:-}" ]; then
+    echo "env var DEV_ENV must be set"
+    exit 1
+fi
+
+# Enable dry-run mode if requested
+if [[ "${1:-}" == "--dry" ]]; then
+    dry_run="1"
+fi
+
+log() {
+    if [[ "$dry_run" == "1" ]]; then
+        echo "[DRY_RUN]: $1"
+    else
+        echo "$1"
+    fi
+}
+
+# Replace individual subfolders from your config repo
+update_files() {
+    local source_dir="$1"
+    local dest_dir="$2"
+
+    log "Syncing: $source_dir → $dest_dir"
+    pushd "$source_dir" > /dev/null
+
+    # Only update the folders you actually track
+    for c in $(find . -mindepth 1 -maxdepth 1 -type d); do
+        local relative="${c#./}"
+        local target="${dest_dir%/}/$relative"
+
+        if [[ -d "$target" ]]; then
+            log "  Removing target dir: $target"
+            [[ "$dry_run" == "0" ]] && rm -rf "$target"
+        fi
+
+        log "  Copying $relative → $target"
+        [[ "$dry_run" == "0" ]] && cp -r "$relative" "$target"
+    done
+
+    popd > /dev/null
+}
+
+# Replace individual dotfiles
+copy() {
+    local src="$1"
+    local dest="$2"
+
+    if [[ -f "$dest" ]]; then
+        log "Removing file: $dest"
+        [[ "$dry_run" == "0" ]] && rm -f "$dest"
+    fi
+
+    log "Copying file: $src → $dest"
+    [[ "$dry_run" == "0" ]] && cp "$src" "$dest"
+}
+
+# Sync configs
+update_files "$DEV_ENV/env/.config" "$XDG_CONFIG_HOME"
+update_files "$DEV_ENV/env/.local" "$HOME/.local"
+
+# Dotfile sync
+copy "$DEV_ENV/env/.zshrc" "$HOME/.zshrc"
+copy "$DEV_ENV/env/.zsh_profile" "$HOME/.zsh_profile"
+copy "$DEV_ENV/env/.zsh_aliases" "$HOME/.zsh_aliases"
+copy "$DEV_ENV/env/.zprofile" "$HOME/.zprofile"
+
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+mkdir -p "$ZSH_CUSTOM"
+copy "$DEV_ENV/env/aliases.zsh" "$ZSH_CUSTOM/aliases.zsh"
+
+# Custom script installation
+copy "$DEV_ENV/dev-env" "$HOME/.local/scripts/dev-env"
+
+# Reload Hyprland if available
+command -v hyprctl &>/dev/null && hyprctl reload
+

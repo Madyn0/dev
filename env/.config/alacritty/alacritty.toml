@@ -1,0 +1,35 @@
+[env]
+TERM = "xterm-256color"
+EDITOR = "nvim"
+
+[terminal.shell]
+program = "/bin/zsh"
+args = ['--login']
+
+[cursor]
+style = "Block"
+
+[font]
+size = 13.0
+# normal = { family = "Iosevka Nerd Font", style = "Regular" }
+# normal = { family = "FiraCode Nerd Font Mono", style = "Regular" }
+normal = { family = "JetBrains Mono Nerd Font", style = "Regular" }
+# normal = { family = "SauceCodePro Nerd Font Mono", style = "Regular" }
+
+[window]
+opacity = 1
+decorations = "None"
+# dynamic_padding = true
+
+[window.padding]
+x = 5
+y = 5
+
+[general]
+live_config_reload = true
+
+import = [
+  "~/.config/alacritty/rosepine.toml"
+  # "~/.config/alacritty/tokyonight.toml"
+  # "~/.config/alacritty/catppuccin-mocha.toml"
+]

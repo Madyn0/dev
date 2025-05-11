@@ -1,0 +1,12 @@
+export XDG_CONFIG_HOME=$HOME/.config
+export DEV_ENV="$HOME/dev"
+
+VIM="nvim"
+
+export EDITOR=$VIM
+export VISUAL=$VIM
+export GIT_EDITOR=$VIM
+
+
+# Load dev-env config (if exists)
+# [[ -f "$DEV_ENV/dev-env" ]] && source "$DEV_ENV/dev-env"

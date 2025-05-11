@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set_wallpaper() {
+  hyprctl hyprpaper unload all
+  hyprctl hyprpaper preload "$1"
+  hyprctl hyprpaper wallpaper "DP-1,$1"
+  hyprctl hyprpaper wallpaper "HDMI-A-1,$1"
+}
+
+# Get all wallpaper paths from hyprpaper.conf
+mapfile -t wallpaper_paths < <(grep "^preload" /home/madyn/.config/hypr/hyprpaper.conf | cut -d= -f2-)
+
+# Create a menu from the wallpaper paths
+menu_options=()
+for path in "${wallpaper_paths[@]}"; do
+  # Extract the directory and filename from the path
+  dir=$(dirname "$path")
+  filename=$(basename "$path")
+  menu_entry="${dir##*/}/$filename"
+  menu_options+=("$menu_entry")
+done
+
+# Use rofi to select a wallpaper
+selected_wallpaper=$(printf '%s\n' "${menu_options[@]}" | rofi -dmenu -i -p "Select a Wallpaper" -selected-row 0 -theme /home/madyn/.config/rofi/launchers/wall-theme.rasi)
+
+# Check if a wallpaper was selected
+if [ -n "$selected_wallpaper" ]; then
+  # Find the corresponding path for the selected menu entry
+  for path in "${wallpaper_paths[@]}"; do
+    dir=$(dirname "$path")
+    filename=$(basename "$path")
+    menu_entry="${dir##*/}/$filename"
+    if [ "$menu_entry" == "$selected_wallpaper" ]; then
+      set_wallpaper "$path"
+      notify-send "Wallpaper Changed" "Successfully changed wallpaper."
+      break
+    fi
+  done
+else
+  notify-send "Wallpaper Change Cancelled" "No wallpaper selected."
+fi

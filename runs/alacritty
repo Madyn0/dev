@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Installing Alacritty..."
+sudo pacman -S alacritty --noconfirm --needed
+echo "Alacritty installed successfully."
+
+
+echo "Removing Kitty (if installed)..."
+if ! command -v kitty >/dev/null; then
+  echo "Kitty is not installed. Nothing to remove."
+  exit 0
+fi
+
+sudo pacman -Rns kitty --noconfirm
+echo "Kitty removed successfully."
