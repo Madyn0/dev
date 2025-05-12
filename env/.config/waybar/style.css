@@ -35,40 +35,33 @@
   border-radius: 5px;
 }
 
-#clock,
-#pulseaudio,
 #cpu,
+#cava,
+#clock,
 #memory,
-
+#pulseaudio,
 #custom-spotify {
   background-color: #101010;
   padding: 0.5rem 1rem;
   margin: 5px 0;
-  border-radius: 5px;
-}
-
-#memory {
-  border-radius: 5px;
-  margin-left: 0.3rem;
-}
-
-#cpu {
   border-radius: 5px;
   margin-left: 0.3rem;
 }
 
 #clock {
   color: #8caaee;
-  border-radius: 5px;
-  margin-right: 1rem;
 }
 
 #pulseaudio {
   color: #ea999c;
-  border-radius: 5px;
-  margin-left: 0.3rem;
 }
 
-#tray {
-  border-radius: 5px;
+@keyframes cava-pulse {
+0%   { color: #9091e8; }
+50%  { color: #babbf1; }
+100% { color: #9091e8; }
+}
+
+#cava {
+  animation: cava-pulse 3s infinite;
 }

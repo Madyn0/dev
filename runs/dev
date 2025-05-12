@@ -7,13 +7,12 @@ echo "Installing dev packages..."
 sudo pacman -S \
   grim \
   slurp \
-  waybar \
   vivaldi \
   cliphist \
   wl-clipboard \
   wl-clip-persist \
   --noconfirm --needed
 
-yay -S pyprland --noconfirm --needed
+yay -S pyprland waybar-cava --noconfirm --needed
 
 echo "dev packages installed successfully."
