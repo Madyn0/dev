@@ -26,7 +26,17 @@ sudo pacman -S \
   ttf-liberation \
   --needed --noconfirm
 
-yay -S ttf-icomoon-feather-git ttf-all-the-icons --needed --noconfirm
+yay -S ttf-all-the-icons --needed --noconfirm
+
+DIR="$DEV_ENV/env"
+FONT_DIR="$HOME/.local/share/fonts"
+
+if [[ -d "$FONT_DIR" ]]; then
+  cp -rf $DIR/fonts/* "$FONT_DIR"
+else
+  mkdir -p "$FONT_DIR"
+  cp -rf $DIR/fonts/* "$FONT_DIR"
+fi
 
 echo "Fonts installed successfully."
 
