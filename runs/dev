@@ -11,8 +11,9 @@ sudo pacman -S \
   cliphist \
   wl-clipboard \
   wl-clip-persist \
+  hyprpolkitagent \
   --noconfirm --needed
 
-yay -S pyprland waybar-cava --noconfirm --needed
+yay -S pyprland rose-pine-hyprcursor --noconfirm --needed
 
 echo "dev packages installed successfully."
