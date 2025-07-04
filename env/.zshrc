@@ -4,12 +4,6 @@
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
-
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
@@ -72,8 +66,12 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  heroku
+  heroku-alias
   fzf
   fzf-tab
+  rust
+  rvm
   zsh-autosuggestions
   zsh-syntax-highlighting
   ssh-agent
@@ -102,6 +100,9 @@ FZF_TAB_FLAGS=(
 )
 zstyle ':fzf-tab:complete:*' fzf-flags ${FZF_TAB_FLAGS[@]}
 zstyle ':fzf-tab:complete:*' fzf-preview 'lsd --tree --depth 2 --sort extension --group-directories-first $realpath'
+
+autoload -U promptinit; promptinit
+prompt pure
 
 source $ZSH/oh-my-zsh.sh
 
@@ -136,3 +137,5 @@ source $ZSH/oh-my-zsh.sh
 
 source ~/.zsh_profile
 source ~/.zsh_aliases
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
