@@ -9,6 +9,7 @@ sudo pacman -S \
   slurp \
   vivaldi \
   cliphist \
+  man-pages \
   wl-clipboard \
   wl-clip-persist \
   hyprpolkitagent \

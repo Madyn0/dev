@@ -9,6 +9,9 @@ export ZSH="$HOME/.oh-my-zsh"
 # a theme from this variable instead of looking in $ZSH/themes/
 # If set to an empty array, this variable will have no effect.
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+# ZSH_THEME="lambda"
+# ZSH_THEME="candy"
+ZSH_THEME="daveverwer"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -18,7 +21,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # HYPHEN_INSENSITIVE="true"
 
 # Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
+zstyle ':omz:update' mode disabled  # disable automatic updates
 # zstyle ':omz:update' mode auto      # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
@@ -54,10 +57,36 @@ export ZSH="$HOME/.oh-my-zsh"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
+HIST_STAMPS="yyyy-mm-dd"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
+
+# ---- completion: do ours first, and skip OMZ's global compinit ----
+# export skip_global_compinit=1
+# autoload -Uz compinit
+# ZSH_COMPDUMP=${ZSH_COMPDUMP:-~/.zcompdump-$HOST-$ZSH_VERSION}
+#
+# if [[ -r "$ZSH_COMPDUMP.zwc" && "$ZSH_COMPDUMP.zwc" -nt "$ZSH_COMPDUMP" ]]; then
+#   source "$ZSH_COMPDUMP.zwc"
+# else
+#   compinit -C -d "$ZSH_COMPDUMP"   # creates/refreshes dump when needed
+#   [[ -r "$ZSH_COMPDUMP" ]] && zcompile -R "$ZSH_COMPDUMP.zwc" "$ZSH_COMPDUMP" 2>/dev/null
+# fi
+
+export skip_global_compinit=1
+ZSH_COMPDUMP=${ZSH_COMPDUMP:-~/.zcompdump-$HOST-$ZSH_VERSION}
+autoload -Uz compinit
+
+_lazy_compinit_then_complete() {
+  # run once
+  zle -D complete-word 2>/dev/null
+  compinit -C -d "$ZSH_COMPDUMP"
+  [[ -r "$ZSH_COMPDUMP" ]] && zcompile -R "$ZSH_COMPDUMP.zwc" "$ZSH_COMPDUMP" 2>/dev/null
+  zle complete-word        # perform the original action
+}
+zle -N _lazy_compinit_then_complete
+bindkey '^I' _lazy_compinit_then_complete  # ^I is Tab
 
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
@@ -66,15 +95,10 @@ export ZSH="$HOME/.oh-my-zsh"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
-  heroku
-  heroku-alias
   fzf
   fzf-tab
-  rust
-  rvm
   zsh-autosuggestions
   zsh-syntax-highlighting
-  ssh-agent
 )
 
 eval "$(zoxide init zsh)"
@@ -101,8 +125,8 @@ FZF_TAB_FLAGS=(
 zstyle ':fzf-tab:complete:*' fzf-flags ${FZF_TAB_FLAGS[@]}
 zstyle ':fzf-tab:complete:*' fzf-preview 'lsd --tree --depth 2 --sort extension --group-directories-first $realpath'
 
-autoload -U promptinit; promptinit
-prompt pure
+# autoload -U promptinit; promptinit
+# prompt pure
 
 source $ZSH/oh-my-zsh.sh
 
@@ -138,4 +162,37 @@ source $ZSH/oh-my-zsh.sh
 source ~/.zsh_profile
 source ~/.zsh_aliases
 
+wt() {
+  git worktree add "$@"
+  dir="${@: -1}"
+
+  cp .ruby-gemset "$dir"/.ruby-gemset
+  cp -r .bundle/ "$dir"/.bundle/
+  cp .rubocop.yml "$dir"/.rubocop.yml
+
+  cd "$dir" || return
+
+  if git show-ref --verify --quiet refs/heads/main; then
+    base_branch="main"
+  elif git show-ref --verify --quiet refs/heads/master; then
+    base_branch="master"
+  else
+    echo "❌ Could not detect main or master branch."
+    return 1
+  fi
+
+  echo "🔄 Rebasing current branch onto $base_branch..."
+  git fetch origin
+  git rebase "origin/$base_branch" || {
+    echo "⚠️ Rebase failed — please resolve conflicts manually."
+    return 1
+  }
+
+  echo "✅ Rebased onto $base_branch."
+}
+
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+#
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
