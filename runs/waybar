@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Installing waybar packages..."
+
+yay -S waybar-cava --noconfirm --needed
+
+echo "Waybar packages installed successfully."
