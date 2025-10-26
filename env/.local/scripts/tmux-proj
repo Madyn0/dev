@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+(
+cd $HOME/dev/env/scripts
+./tmux-proj
+)
